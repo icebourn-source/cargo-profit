@@ -10,6 +10,7 @@ import ShipmentSummary from './components/ShipmentSummary'
 import ReverseCalculator from './components/ReverseCalculator'
 import ShipmentList from './components/ShipmentList'
 import CarrierPresets from './components/CarrierPresets'
+import SyncControls from './components/SyncControls'
 
 // Курсы, действующие для формы: справочный автокурс, если выбран и загружен,
 // иначе ручной «курс карго»
@@ -19,7 +20,8 @@ function effectiveRates(rs: RateSettings): FrozenRates {
 }
 
 export default function App() {
-  const { state, upsertShipment, deleteShipment, saveCarriers, setRateSettings } = useAppData()
+  const { state, upsertShipment, deleteShipment, saveCarriers, setRateSettings, sync, syncNow, unsyncedCount } =
+    useAppData()
   const [draft, setDraft] = useState<Draft>(emptyDraft)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [saveError, setSaveError] = useState<string | null>(null)
@@ -64,11 +66,14 @@ export default function App() {
 
   return (
     <div className="mx-auto max-w-6xl px-3 py-4 sm:px-6">
-      <header className="mb-4">
-        <h1 className="text-2xl font-bold text-slate-900">Карго Профит</h1>
-        <p className="text-sm text-slate-500">
-          Учёт себестоимости и прибыли с поставок из Китая · ¥ / $ / Br
-        </p>
+      <header className="mb-4 flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Карго Профит</h1>
+          <p className="text-sm text-slate-500">
+            Учёт себестоимости и прибыли с поставок из Китая · ¥ / $ / Br
+          </p>
+        </div>
+        <SyncControls status={sync.status} message={sync.message} unsyncedCount={unsyncedCount} onSync={syncNow} />
       </header>
 
       <div className="space-y-4">
